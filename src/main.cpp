@@ -7,8 +7,16 @@ int main(int argc, char** argv)
   arguments::Data args = arguments::parse(argc, argv);
 
   Bitmap i(args.input_file);
-
-  i.save("test.bmp");
+  
+  if (args.o_flag)
+  {
+    LINFO("Saving to \"" + args.o_string + "\".");
+    i.save(args.o_string);
+  }
+  else
+  {
+    i.save("glitch.bmp");
+  }
 
   LINFO("Ending");
   return exit_code::success;

@@ -14,6 +14,7 @@ arguments::Data arguments::parse(int argc, char** argv)
     switch (option)
     {
       case 'o':
+        d.o_string = optarg;
         d.o_flag = true;
         break;
       case '?':
