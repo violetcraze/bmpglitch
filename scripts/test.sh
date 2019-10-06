@@ -5,4 +5,4 @@ echo "Testing ..."
 echo "----------------------------------------"
 
 cd build
-./bmpglitch ../data/wallpaper.bmp
+./bmpglitch ../data/astro.bmp

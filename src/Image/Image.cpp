@@ -1,11 +1,19 @@
 #include "./Image.h"
 
-uint32_t uint_from_buffer(char* b, int index)
+uint32_t uint32_from_buffer(char* b, int index)
 {
   uint32_t i;
   i = b[index + 3];
   i = (i << 8) | b[index + 2];
   i = (i << 8) | b[index + 1];
+  i = (i << 8) | b[index];
+  return i;
+}
+
+uint16_t uint16_from_buffer(char* b, int index)
+{
+  uint16_t i;
+  i = b[index + 1];
   i = (i << 8) | b[index];
   return i;
 }
@@ -29,20 +37,57 @@ Image::Image(std::string bmp_path)
     exit(exit_code::invalid_bmp_file);
   }
 
-  f_size = uint_from_buffer(f_b, 2);
-  f_off_bits = uint_from_buffer(f_b, 10);
+  f_size = uint32_from_buffer(f_b, 2);
+  f_off_bits = uint32_from_buffer(f_b, 10);
   LINFO("Input file is " + std::to_string(f_size) + " bytes.");
   LDBUG("off_bits = " + std::to_string(f_off_bits));
 
   // load into buffer based on size in bytes
 
-  u_int32_t buffer_size = f_size - 14;
+  uint32_t buffer_size = f_size - 14;
   char* b = new char[buffer_size];
   input.read(b, buffer_size);
 
   // image header
 
-  
+  i_size = uint32_from_buffer(b, 0);
+  LDBUG("i_size = " + std::to_string(i_size));
+  if (i_size == 40)
+  {
+    LINFO("Windows V3 Image Header being used.");
+
+    i_width = uint32_from_buffer(b, 4);
+    i_height = uint32_from_buffer(b, 8);
+    LDBUG("i_width = " + std::to_string(i_width));
+    LDBUG("i_height = " + std::to_string(i_height));
+
+    if (b[12] != 1 || b[13] != 0)
+    {
+      LEROR("Invalid Image Header!");
+      exit(exit_code::invalid_bmp_file);
+    }
+
+    i_bit_count = uint16_from_buffer(b, 14);
+    i_compression = uint32_from_buffer(b, 16);
+    i_size_image = uint32_from_buffer(b, 20);
+    i_x_pix_meter = uint32_from_buffer(b, 24);
+    i_y_pix_meter = uint32_from_buffer(b, 28);
+    i_color_used = uint32_from_buffer(b, 32);
+    i_color_important = uint32_from_buffer(b, 36);
+
+    LDBUG("i_bit_count = " + std::to_string(i_bit_count));
+    LDBUG("i_compression = " + std::to_string(i_compression));
+    LDBUG("i_size_image = " + std::to_string(i_size_image));
+    LDBUG("i_x_pix_meter = " + std::to_string(i_x_pix_meter));
+    LDBUG("i_y_pix_meter = " + std::to_string(i_y_pix_meter));
+    LDBUG("i_color_used = " + std::to_string(i_color_used));
+    LDBUG("i_color_important = " + std::to_string(i_color_important));
+  }
+  else
+  {
+    LEROR("Unsupported Image Header!");
+    exit(exit_code::invalid_bmp_file);
+  }
 
   delete[] b;
 
