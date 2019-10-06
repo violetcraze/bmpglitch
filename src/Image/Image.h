@@ -19,6 +19,9 @@ class Image
     char r;
     char b;
     char g;
+    Color() = default;
+    Color(const Color&) = default;
+    ~Color() = default;
   };
 
   private:
@@ -36,9 +39,12 @@ class Image
     uint32_t i_color_used;
     uint32_t i_color_important;
 
-    std::vector<Color> color_table;
+    //std::vector<Color> color_table;
+    size_t color_table_size;
+    Image::Color* color_table;
 
-    void* pixel_data;
+    size_t pixel_data_size;
+    char* pixel_data;
 
 };
 

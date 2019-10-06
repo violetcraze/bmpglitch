@@ -35,18 +35,18 @@ void uint16_to_out(std::ofstream& o, u_int16_t i)
 Image::Color get_color(char* b, int index)
 {
   Image::Color c;
-  c.r = b[index + 1];
-  c.g = b[index + 2];
-  c.b = b[index + 3];
+  c.r = b[index + 2];
+  c.g = b[index + 1];
+  c.b = b[index];
   return c;
 }
 
 void color_to_out(std::ofstream& o, Image::Color& c)
 {
-  o.put(0);
-  o.put(c.r);
-  o.put(c.g);
   o.put(c.b);
+  o.put(c.g);
+  o.put(c.r);
+  o.put(0);
 }
 
 Image::Image(std::string bmp_path)
@@ -127,12 +127,14 @@ Image::Image(std::string bmp_path)
 
   if (i_bit_count <= 8)
   {
-    int color_table_size = 1 << i_bit_count;
+    color_table_size = 1 << i_bit_count;
     LDBUG("color_table_size = " + std::to_string(color_table_size));
 
-    for (int i = 0; i < color_table_size; i++)
+    color_table = new Image::Color[color_table_size];
+
+    for (size_t i = 0; i < color_table_size; i++)
     {
-      color_table.push_back(get_color(b, off + (i * sizeof(uint32_t))));
+      color_table[i] = get_color(b, off + (i * sizeof(uint32_t)));
     }
 
     off += color_table_size * sizeof(uint32_t);
@@ -147,14 +149,19 @@ Image::Image(std::string bmp_path)
 
   if (i_bit_count == 4)
   {
-    std::vector<char>* pix = new std::vector<char>;
-    for (size_t i = 0; i < i_width * i_height / 2; i++)
+    pixel_data_size = i_width * i_height;
+    //pixel_data_size = 20;
+    pixel_data = new char[pixel_data_size];
+    for (size_t i = 0; i < pixel_data_size / 2; i++)
     {
       char c = b[off + i];
-      pix->push_back((c >> 4) & 0xF);
-      pix->push_back(c & 0xF);
+      // printf("%d\n", static_cast<int>(i));
+      // printf("in = %02x\n", c);
+      pixel_data[i * 2] = (c >> 4) & 0xF;
+      pixel_data[i * 2 + 1] = c & 0xF;
+      // printf("out1 = %02x\n", pixel_data[i * 2]);
+      // printf("out2 = %02x\n", pixel_data[i * 2 + 1]);
     }
-    pixel_data = pix;
   }
 
   delete[] b;
@@ -163,10 +170,8 @@ Image::Image(std::string bmp_path)
 
 Image::~Image()
 {
-  if (i_bit_count == 4)
-  {
-    delete reinterpret_cast<std::vector<char>*>(pixel_data);
-  }
+  delete pixel_data;
+  delete color_table;
 }
 
 void Image::save(std::string out_path)
@@ -197,18 +202,21 @@ void Image::save(std::string out_path)
   uint32_to_out(o, i_color_used);
   uint32_to_out(o, i_color_important);
 
-  for (size_t i = 0; i < color_table.size(); i++)
+  for (size_t i = 0; i < color_table_size; i++)
   {
     color_to_out(o, color_table[i]);
   }
 
   if (i_bit_count == 4)
   {
-    std::vector<char>* p = reinterpret_cast<std::vector<char>*>(pixel_data);
-    for (size_t i = 0; i < p->size(); i += 2)
+    for (size_t i = 0; i < pixel_data_size; i += 2)
     {
-      char c = (*p)[i + 1];
-      c |= (*p)[1] << 4;
+      // printf("%d\n", static_cast<int>(i));
+      // printf("in1 = %02x\n", pixel_data[i]);
+      // printf("in2 = %02x\n", pixel_data[i + 1]);
+      char c = pixel_data[i + 1];
+      c |= pixel_data[i] << 4;
+      // printf("out = %02x\n", c);
       o.put(c);
     }
   }
