@@ -150,17 +150,12 @@ Image::Image(std::string bmp_path)
   if (i_bit_count == 4)
   {
     pixel_data_size = i_width * i_height;
-    //pixel_data_size = 20;
     pixel_data = new char[pixel_data_size];
     for (size_t i = 0; i < pixel_data_size / 2; i++)
     {
       char c = b[off + i];
-      // printf("%d\n", static_cast<int>(i));
-      // printf("in = %02x\n", c);
       pixel_data[i * 2] = (c >> 4) & 0xF;
       pixel_data[i * 2 + 1] = c & 0xF;
-      // printf("out1 = %02x\n", pixel_data[i * 2]);
-      // printf("out2 = %02x\n", pixel_data[i * 2 + 1]);
     }
   }
 
@@ -211,12 +206,8 @@ void Image::save(std::string out_path)
   {
     for (size_t i = 0; i < pixel_data_size; i += 2)
     {
-      // printf("%d\n", static_cast<int>(i));
-      // printf("in1 = %02x\n", pixel_data[i]);
-      // printf("in2 = %02x\n", pixel_data[i + 1]);
       char c = pixel_data[i + 1];
       c |= pixel_data[i] << 4;
-      // printf("out = %02x\n", c);
       o.put(c);
     }
   }
