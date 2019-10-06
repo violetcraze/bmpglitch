@@ -2,11 +2,11 @@
 
 uint32_t uint32_from_buffer(char* b, int index)
 {
-  uint32_t i;
-  i = b[index + 3];
-  i = (i << 8) | b[index + 2];
-  i = (i << 8) | b[index + 1];
-  i = (i << 8) | b[index];
+  uint32_t i = 0;
+  i = (b[index + 3] & 0xFF);
+  i = (i << 8) | (b[index + 2] & 0xFF);
+  i = (i << 8) | (b[index + 1] & 0xFF);
+  i = (i << 8) | (b[index] & 0xFF);
   return i;
 }
 
@@ -21,8 +21,8 @@ void uint32_to_out(std::ofstream& o, u_int32_t i)
 uint16_t uint16_from_buffer(char* b, int index)
 {
   uint16_t i;
-  i = b[index + 1];
-  i = (i << 8) | b[index];
+  i = (b[index + 1] & 0xFF);
+  i = (i << 8) | (b[index] & 0xFF);
   return i;
 }
 
