@@ -3,6 +3,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <vector>
 #include "../logger/logger.h"
 #include "../exitcode.h"
 
@@ -10,6 +11,13 @@ class Image
 {
   public:
     Image(std::string bmp_path);
+
+  struct Color
+  {
+    char r;
+    char b;
+    char g;
+  };
 
   private:
     uint32_t f_size;
@@ -25,7 +33,9 @@ class Image
     uint32_t i_y_pix_meter;
     uint32_t i_color_used;
     uint32_t i_color_important;
-    
+
+    std::vector<Color> color_table;
+
 };
 
 #endif /* IMAGE_H_INCLUDE */

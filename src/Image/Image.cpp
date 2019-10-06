@@ -18,6 +18,15 @@ uint16_t uint16_from_buffer(char* b, int index)
   return i;
 }
 
+Image::Color get_color(char* b, int index)
+{
+  Image::Color c;
+  c.r = b[index + 1];
+  c.g = b[index + 2];
+  c.b = b[index + 3];
+  return c;
+}
+
 Image::Image(std::string bmp_path)
 {
   std::ifstream input(bmp_path, std::ios::binary);
@@ -47,6 +56,7 @@ Image::Image(std::string bmp_path)
   uint32_t buffer_size = f_size - 14;
   char* b = new char[buffer_size];
   input.read(b, buffer_size);
+  int off = 0;
 
   // image header
 
@@ -88,6 +98,37 @@ Image::Image(std::string bmp_path)
     LEROR("Unsupported Image Header!");
     exit(exit_code::invalid_bmp_file);
   }
+
+  off += i_size;
+
+  // color table
+
+  if (i_bit_count <= 8)
+  {
+    int color_table_size = 1 << i_bit_count;
+    LDBUG("color_table_size = " + std::to_string(color_table_size));
+
+    for (int i = 0; i < color_table_size; i++)
+    {
+      LDBUG("offset = " + std::to_string(off + (i * sizeof(uint32_t))));
+      color_table.push_back(get_color(b, off + (i * sizeof(uint32_t))));
+    }
+
+    #ifdef LEVEL_DEBUG
+    for (size_t i = 0; i < color_table.size(); i++)
+    {
+      std::clog << std::hex << +color_table[i].r << " " << +color_table[i].g << " " << +color_table[i].b<< '\n';
+    }
+    #endif
+
+    off += color_table_size * sizeof(uint32_t);
+  }
+  else
+  {
+    LEROR("Unsupported bit count!");
+    exit(exit_code::invalid_bmp_file);
+  }
+  
 
   delete[] b;
 
