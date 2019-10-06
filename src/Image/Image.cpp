@@ -110,16 +110,8 @@ Image::Image(std::string bmp_path)
 
     for (int i = 0; i < color_table_size; i++)
     {
-      LDBUG("offset = " + std::to_string(off + (i * sizeof(uint32_t))));
       color_table.push_back(get_color(b, off + (i * sizeof(uint32_t))));
     }
-
-    #ifdef LEVEL_DEBUG
-    for (size_t i = 0; i < color_table.size(); i++)
-    {
-      std::clog << std::hex << +color_table[i].r << " " << +color_table[i].g << " " << +color_table[i].b<< '\n';
-    }
-    #endif
 
     off += color_table_size * sizeof(uint32_t);
   }
@@ -129,7 +121,28 @@ Image::Image(std::string bmp_path)
     exit(exit_code::invalid_bmp_file);
   }
   
+  // Pixel Data
+
+  if (i_bit_count == 4)
+  {
+    std::vector<char>* pix = new std::vector<char>;
+    for (size_t i = 0; i < i_width * i_height / 2; i++)
+    {
+      char c = b[off + i];
+      pix->push_back(c >> 4);
+      pix->push_back(c << 4);
+    }
+    pixel_data = pix;
+  }
 
   delete[] b;
 
+}
+
+Image::~Image()
+{
+  if (i_bit_count == 4)
+  {
+    delete reinterpret_cast<std::vector<char>*>(pixel_data);
+  }
 }

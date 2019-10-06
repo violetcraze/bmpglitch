@@ -11,6 +11,7 @@ class Image
 {
   public:
     Image(std::string bmp_path);
+    ~Image();
 
   struct Color
   {
@@ -35,6 +36,8 @@ class Image
     uint32_t i_color_important;
 
     std::vector<Color> color_table;
+
+    void* pixel_data;
 
 };
 
