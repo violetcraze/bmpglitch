@@ -3,6 +3,8 @@
 
 #include "./exitcode.h"
 #include "./logger/logger.h"
+#include "./usage/usage.h"
+#include "./arguments/arguments.h"
 
 int main(int, char**);
 

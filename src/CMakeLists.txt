@@ -28,4 +28,6 @@ add_executable(
   ${PROJECT_NAME}
   main.cpp
   logger/logger.cpp
+  usage/usage.cpp
+  arguments/arguments.cpp
 )
