@@ -15,6 +15,7 @@ namespace arguments
       bool o_flag;
       
       std::string o_string;
+      std::string input_file;
 
       Data();
       Data(const Data&) = default;

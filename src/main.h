@@ -5,6 +5,7 @@
 #include "./logger/logger.h"
 #include "./usage/usage.h"
 #include "./arguments/arguments.h"
+#include "./Image/Image.h"
 
 int main(int, char**);
 

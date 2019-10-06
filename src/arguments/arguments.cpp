@@ -22,5 +22,15 @@ arguments::Data arguments::parse(int argc, char** argv)
         exit(exit_code::invalid_option);
     }
   }
+  auto optindex = optind;
+  LINFO("argc = " + std::to_string(argc));
+  LINFO("optindex = " + std::to_string(optindex));
+  if (optindex >= argc)
+  {
+    usage::print();
+    LEROR("Not enough arguments!");
+    exit(exit_code::not_enough_arguments);
+  }
+  d.input_file = argv[optindex];
   return d;
 }
