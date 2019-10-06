@@ -1,0 +1,1 @@
+/usr/bin/c++     CMakeFiles/bmpglitch.dir/main.cpp.o CMakeFiles/bmpglitch.dir/logger/logger.cpp.o  -o bmpglitch 

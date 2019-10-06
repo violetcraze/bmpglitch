@@ -1,0 +1,3 @@
+/home/violet/dev/bitmap/bitmap/build/CMakeFiles/rebuild_cache.dir
+/home/violet/dev/bitmap/bitmap/build/CMakeFiles/bmpglitch.dir
+/home/violet/dev/bitmap/bitmap/build/CMakeFiles/edit_cache.dir
