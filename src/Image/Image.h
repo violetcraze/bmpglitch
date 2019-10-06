@@ -12,6 +12,7 @@ class Image
   public:
     Image(std::string bmp_path);
     ~Image();
+    void save(std::string out_path);
 
   struct Color
   {

@@ -10,12 +10,26 @@ uint32_t uint32_from_buffer(char* b, int index)
   return i;
 }
 
+void uint32_to_out(std::ofstream& o, u_int32_t i)
+{
+  o.put(i & 0xFF);
+  o.put((i >> 8) & 0xFF);
+  o.put((i >> 16) & 0xFF);
+  o.put((i >> 24) & 0xFF);
+}
+
 uint16_t uint16_from_buffer(char* b, int index)
 {
   uint16_t i;
   i = b[index + 1];
   i = (i << 8) | b[index];
   return i;
+}
+
+void uint16_to_out(std::ofstream& o, u_int16_t i)
+{
+  o.put(i & 0xFF);
+  o.put((i >> 8) & 0xFF);
 }
 
 Image::Color get_color(char* b, int index)
@@ -25,6 +39,14 @@ Image::Color get_color(char* b, int index)
   c.g = b[index + 2];
   c.b = b[index + 3];
   return c;
+}
+
+void color_to_out(std::ofstream& o, Image::Color& c)
+{
+  o.put(0);
+  o.put(c.r);
+  o.put(c.g);
+  o.put(c.b);
 }
 
 Image::Image(std::string bmp_path)
@@ -129,8 +151,8 @@ Image::Image(std::string bmp_path)
     for (size_t i = 0; i < i_width * i_height / 2; i++)
     {
       char c = b[off + i];
-      pix->push_back(c >> 4);
-      pix->push_back(c << 4);
+      pix->push_back((c >> 4) & 0xF);
+      pix->push_back(c & 0xF);
     }
     pixel_data = pix;
   }
@@ -144,5 +166,50 @@ Image::~Image()
   if (i_bit_count == 4)
   {
     delete reinterpret_cast<std::vector<char>*>(pixel_data);
+  }
+}
+
+void Image::save(std::string out_path)
+{
+  std::ofstream o(out_path, std::ios::binary);
+
+  o.put('B');
+  o.put('M');
+  uint32_to_out(o, f_size);
+  o.put(0);
+  o.put(0);
+  o.put(0);
+  o.put(0);
+  uint32_to_out(o, f_off_bits);
+
+  uint32_to_out(o, i_size);
+  uint32_to_out(o, i_width);
+  uint32_to_out(o, i_height);
+
+  o.put(1);
+  o.put(0);
+
+  uint16_to_out(o, i_bit_count);
+  uint32_to_out(o, i_compression);
+  uint32_to_out(o, i_size_image);
+  uint32_to_out(o, i_x_pix_meter);
+  uint32_to_out(o, i_y_pix_meter);
+  uint32_to_out(o, i_color_used);
+  uint32_to_out(o, i_color_important);
+
+  for (size_t i = 0; i < color_table.size(); i++)
+  {
+    color_to_out(o, color_table[i]);
+  }
+
+  if (i_bit_count == 4)
+  {
+    std::vector<char>* p = reinterpret_cast<std::vector<char>*>(pixel_data);
+    for (size_t i = 0; i < p->size(); i += 2)
+    {
+      char c = (*p)[i + 1];
+      c |= (*p)[1] << 4;
+      o.put(c);
+    }
   }
 }
