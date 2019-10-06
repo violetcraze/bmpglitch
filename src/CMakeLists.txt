@@ -30,5 +30,5 @@ add_executable(
   logger/logger.cpp
   usage/usage.cpp
   arguments/arguments.cpp
-  Image/Image.cpp
+  Bitmap/Bitmap.cpp
 )

@@ -1,4 +1,4 @@
-#include "./Image.h"
+#include "./Bitmap.h"
 
 uint32_t uint32_from_buffer(char* b, int index)
 {
@@ -32,16 +32,16 @@ void uint16_to_out(std::ofstream& o, u_int16_t i)
   o.put((i >> 8) & 0xFF);
 }
 
-Image::Color get_color(char* b, int index)
+Bitmap::Color get_color(char* b, int index)
 {
-  Image::Color c;
+  Bitmap::Color c;
   c.r = b[index + 2];
   c.g = b[index + 1];
   c.b = b[index];
   return c;
 }
 
-void color_to_out(std::ofstream& o, Image::Color& c)
+void color_to_out(std::ofstream& o, Bitmap::Color& c)
 {
   o.put(c.b);
   o.put(c.g);
@@ -49,7 +49,7 @@ void color_to_out(std::ofstream& o, Image::Color& c)
   o.put(0);
 }
 
-Image::Image(std::string bmp_path)
+Bitmap::Bitmap(std::string bmp_path)
 {
   std::ifstream input(bmp_path, std::ios::binary);
   if (sizeof(char) != 1)
@@ -80,13 +80,13 @@ Image::Image(std::string bmp_path)
   input.read(b, buffer_size);
   int off = 0;
 
-  // image header
+  // Bitmap header
 
   i_size = uint32_from_buffer(b, 0);
   LDBUG("i_size = " + std::to_string(i_size));
   if (i_size == 40)
   {
-    LINFO("Windows V3 Image Header being used.");
+    LINFO("Windows V3 Bitmap Header being used.");
 
     i_width = uint32_from_buffer(b, 4);
     i_height = uint32_from_buffer(b, 8);
@@ -95,7 +95,7 @@ Image::Image(std::string bmp_path)
 
     if (b[12] != 1 || b[13] != 0)
     {
-      LEROR("Invalid Image Header!");
+      LEROR("Invalid Bitmap Header!");
       exit(exit_code::invalid_bmp_file);
     }
 
@@ -109,7 +109,7 @@ Image::Image(std::string bmp_path)
 
     LDBUG("i_bit_count = " + std::to_string(i_bit_count));
     LDBUG("i_compression = " + std::to_string(i_compression));
-    LDBUG("i_size_image = " + std::to_string(i_size_image));
+    LDBUG("i_size_Bitmap = " + std::to_string(i_size_image));
     LDBUG("i_x_pix_meter = " + std::to_string(i_x_pix_meter));
     LDBUG("i_y_pix_meter = " + std::to_string(i_y_pix_meter));
     LDBUG("i_color_used = " + std::to_string(i_color_used));
@@ -117,7 +117,7 @@ Image::Image(std::string bmp_path)
   }
   else
   {
-    LEROR("Unsupported Image Header!");
+    LEROR("Unsupported Bitmap Header!");
     exit(exit_code::invalid_bmp_file);
   }
 
@@ -130,7 +130,7 @@ Image::Image(std::string bmp_path)
     color_table_size = 1 << i_bit_count;
     LDBUG("color_table_size = " + std::to_string(color_table_size));
 
-    color_table = new Image::Color[color_table_size];
+    color_table = new Bitmap::Color[color_table_size];
 
     for (size_t i = 0; i < color_table_size; i++)
     {
@@ -163,13 +163,13 @@ Image::Image(std::string bmp_path)
 
 }
 
-Image::~Image()
+Bitmap::~Bitmap()
 {
   delete pixel_data;
   delete color_table;
 }
 
-void Image::save(std::string out_path)
+void Bitmap::save(std::string out_path)
 {
   std::ofstream o(out_path, std::ios::binary);
 

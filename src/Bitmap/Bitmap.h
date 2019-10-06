@@ -1,5 +1,5 @@
-#ifndef IMAGE_H_INCLUDE
-#define IMAGE_H_INCLUDE
+#ifndef BITMAP_H_INCLUDE
+#define BITMAP_H_INCLUDE
 
 #include <fstream>
 #include <iostream>
@@ -7,11 +7,11 @@
 #include "../logger/logger.h"
 #include "../exitcode.h"
 
-class Image
+class Bitmap
 {
   public:
-    Image(std::string bmp_path);
-    ~Image();
+    Bitmap(std::string bmp_path);
+    ~Bitmap();
     void save(std::string out_path);
 
   struct Color
@@ -39,13 +39,12 @@ class Image
     uint32_t i_color_used;
     uint32_t i_color_important;
 
-    //std::vector<Color> color_table;
     size_t color_table_size;
-    Image::Color* color_table;
+    Bitmap::Color* color_table;
 
     size_t pixel_data_size;
     char* pixel_data;
 
 };
 
-#endif /* IMAGE_H_INCLUDE */
+#endif /* BITMAP_H_INCLUDE */

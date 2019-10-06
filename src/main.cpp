@@ -6,7 +6,7 @@ int main(int argc, char** argv)
   LINFO("Starting");
   arguments::Data args = arguments::parse(argc, argv);
 
-  Image i(args.input_file);
+  Bitmap i(args.input_file);
 
   i.save("test.bmp");
 
