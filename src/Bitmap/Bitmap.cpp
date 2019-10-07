@@ -158,6 +158,20 @@ Bitmap::Bitmap(std::string bmp_path)
       pixel_data[i * 2 + 1] = c & 0xF;
     }
   }
+  else if (i_bit_count == 8)
+  {
+    pixel_data_size = i_width * i_height;
+    pixel_data = new char[pixel_data_size];
+    for (size_t i = 0; i < pixel_data_size; i++)
+    {
+      pixel_data[i] = b[off + i];
+    }
+  }
+  else
+  {
+    LEROR("Invalid Bit Count!");
+    exit(exit_code::other);
+  }
 
   delete[] b;
 
@@ -211,6 +225,14 @@ void Bitmap::save(std::string out_path)
       o.put(c);
     }
   }
+  else if (i_bit_count == 8)
+  {
+    for (size_t i = 0; i < pixel_data_size; i++)
+    {
+      o.put(pixel_data[i]);
+    }
+  }
+
 }
 
 uint32_t Bitmap::width() const
