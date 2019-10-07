@@ -7,7 +7,9 @@ int main(int argc, char** argv)
   arguments::Data args = arguments::parse(argc, argv);
 
   Bitmap i(args.input_file);
-  
+
+  glitch::lineending::apply(i);
+
   if (args.o_flag)
   {
     LINFO("Saving to \"" + args.o_string + "\".");

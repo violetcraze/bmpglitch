@@ -6,6 +6,7 @@
 #include "./usage/usage.h"
 #include "./arguments/arguments.h"
 #include "./Bitmap/Bitmap.h"
+#include "./glitch/lineending.h"
 
 int main(int, char**);
 

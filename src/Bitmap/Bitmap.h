@@ -10,19 +10,28 @@
 class Bitmap
 {
   public:
+
+    struct Color
+    {
+      char r;
+      char b;
+      char g;
+      Color() = default;
+      Color(const Color&) = default;
+      ~Color() = default;
+    };
+
     Bitmap(std::string bmp_path);
     ~Bitmap();
     void save(std::string out_path);
 
-  struct Color
-  {
-    char r;
-    char b;
-    char g;
-    Color() = default;
-    Color(const Color&) = default;
-    ~Color() = default;
-  };
+    uint32_t width() const;
+    uint32_t height() const;
+    uint32_t bit_count() const;
+    size_t pixels_size() const;
+    size_t index(int x, int y) const;
+
+    char* pixels();
 
   private:
     uint32_t f_size;

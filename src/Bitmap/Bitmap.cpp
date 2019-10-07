@@ -212,3 +212,33 @@ void Bitmap::save(std::string out_path)
     }
   }
 }
+
+uint32_t Bitmap::width() const
+{
+  return i_width;
+}
+
+uint32_t Bitmap::height() const
+{
+  return i_height;
+}
+
+uint32_t Bitmap::bit_count() const
+{
+  return i_bit_count;
+}
+
+size_t Bitmap::pixels_size() const
+{
+  return pixel_data_size;
+}
+
+size_t Bitmap::index(int x, int y) const
+{
+  return x + y * width();
+}
+
+char* Bitmap::pixels()
+{
+  return pixel_data;
+}

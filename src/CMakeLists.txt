@@ -31,4 +31,5 @@ add_executable(
   usage/usage.cpp
   arguments/arguments.cpp
   Bitmap/Bitmap.cpp
+  glitch/lineending.cpp
 )
